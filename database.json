@@ -1,0 +1,14 @@
+{
+    "defaultEnv": "development",
+    "development": {
+      "ENV": "PRODUCT_CATALOGUE_DEV_DATABASE_URL"
+    },
+    "test": {
+      "ENV": "PRODUCT_CATALOGUE_TEST_DATABASE_URL"
+    },
+    "production": {
+      "ENV": "PRODUCT_CATALOGUE_PROD_DATABASE_URL"
+    },
+    "sql-file" : true
+}
+
