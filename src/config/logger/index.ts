@@ -19,7 +19,7 @@ const myformat = winston.format.combine(
     // level: K loggerLevel,
     transports: [
       new winston.transports.File({
-        filename: 'logs/error.log',
+        filename: 'logs/server.log',
         maxsize: 500,
         format: myformat,
       }),
@@ -32,7 +32,7 @@ const myformat = winston.format.combine(
   const prodLogger = winston.createLogger({
     transports: [
       new winston.transports.File({
-        filename: 'logs/error.log',
+        filename: 'logs/server.log',
         maxsize: 500,
         format: myformat,
       }),

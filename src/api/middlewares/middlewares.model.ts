@@ -1,4 +1,5 @@
-import Response from '../../lib/http/lib.http.response.js';
+import ApiResponse from '../../lib/http/lib.http.response';
+import { Request, Response, NextFunction } from 'express';
 
 /**
  * Joi validation of request parameters
@@ -7,12 +8,13 @@ import Response from '../../lib/http/lib.http.response.js';
  * @returns {object} - Returns an object (error or response).
  * @memberof ModelMiddleware
  */
-const validateData = (schema:any, type:string): object => async (req:any, res:any, next:any) => {
-  interface schema {
+
+const validateData = (schema, type:string) => async (req:Request, res:Response, next: NextFunction) => {
+  interface schemaParams {
     [requestType: string]: object
   }
   try {
-    const getType: schema =  {
+    const getType: schemaParams =  {
       payload: req.body,
       params: req.params,
       query: req.query,
@@ -25,7 +27,7 @@ const validateData = (schema:any, type:string): object => async (req:any, res:an
     const valid = await schema.validate(data, options);
     if (valid.error) {
       const { message } = valid.error.details[0];
-      return Response.error(res, message.replace(/["]/gi, ''), 422);
+      return ApiResponse.error(res, message.replace(/["]/gi, ''), 422);
     }
   } catch (error) {
     return error;

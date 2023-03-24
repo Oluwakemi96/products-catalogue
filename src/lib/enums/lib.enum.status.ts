@@ -1,0 +1,13 @@
+export const HTTP_OK: number = 200;
+export const HTTP_CREATED: number = 201;
+export const HTTP_UNAUTHORIZED: number = 401;
+export const HTTP_FORBIDDEN: number = 403;
+export const HTTP_BAD_REQUES: number = 400;
+export const HTTP_NOT_FOUND: number = 404;
+export const HTTP_CONFLICT: number = 409;
+export const HTTP_GONE: number = 410;
+export const HTTP_TO_MANY_REQUESTS: number = 429;
+export const HTTP_UNPROCESSABLE_ENTITY: number = 422;
+export const HTTP_INTERNAL_SERVER_ERROR: number = 500;
+export const SMTP_TRANSACTION_FAILED: number = 554;
+export const HTTP_SERVICE_UNAVAILABLE: number = 503;
