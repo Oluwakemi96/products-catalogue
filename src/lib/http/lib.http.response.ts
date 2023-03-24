@@ -1,14 +1,17 @@
 import status from 'http-status';
+import { Response } from 'express';
+
+
 
 export default {
-  success: (res:any, message:any, code:any, data:any):void => res.status(code).json({
+  success: (res:Response, message:string, code:number, data:any) => res.status(code).json({
     status: 'success',
     message,
     code,
     data: data || [],
   }),
 
-  error: (res:any, message = '', code = 500):void => {
+  error: (res:Response, message = '', code = 500) => {
     const msg = code === 500 ? 'Internal Server Error' : message;
     return res.status(code).json({
       status: 'error',

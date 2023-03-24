@@ -15,4 +15,20 @@ router.post(
     AuthControllers.signUpUser
 );
 
+router.patch(
+    '/verify-email',
+    Model(Schema.tokenParams, 'query'),
+    AuthMiddlewares.checkIfTokenIsValid,
+    AuthControllers.verifyEmail
+)
+
+router.patch(
+    '/regenerate-token',
+    Model(Schema.regerateToken, 'body'),
+    AuthMiddlewares.checkIfEmailExists,
+    AuthMiddlewares.generateVerificationToken,
+    AuthMiddlewares.setTokenExpiry,
+    AuthControllers.regerateVerificationToken
+)
+
 export default router
