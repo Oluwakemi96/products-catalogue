@@ -18,7 +18,8 @@ export default {
                 first_name,
                 last_name,
                 is_admin,
-                is_email_verified
+                is_email_verified,
+                password
             FROM users
             WHERE email = $1
     `,
@@ -42,11 +43,19 @@ export default {
          FROM users
          WHERE token = $1
     `,
-    regenerateToken:`
+    updateUserToken:`
         UPDATE users
         SET updated_at = NOW(),
             token = $2,
             token_expiry = $3
         WHERE user_id = $1
+    `,
+    resetPassword:`
+       UPDATE users
+       SET updated_at = NOW(),
+           password = $2,
+           token = null,
+           token_expiry = null
+       WHERE user_id = $1
     `
 }

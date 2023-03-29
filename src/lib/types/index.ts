@@ -13,7 +13,8 @@ export type users = {
     is_admin: boolean,
     is_email_verified: boolean,
     token: string,
-    token_expiry: string
+    token_expiry: string,
+    password: string
 }
 
 export interface RequestWithUser extends RequestWithToken{

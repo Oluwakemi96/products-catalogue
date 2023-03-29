@@ -20,3 +20,4 @@ _thumbs/
 node_modules
 .env
 *log
+sendgrid.env

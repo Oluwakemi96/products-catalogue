@@ -1,4 +1,5 @@
 import * as Helpers from '../../lib/helpers/helpers';
+import * as Hash from '../../lib/helpers/hash.auth';
 import dayjs from 'dayjs';
 import logger from '../../config/logger/index';
 import enums from '../../lib/enums';
@@ -73,7 +74,6 @@ export const checkIfTokenIsValid = async (req: RequestWithUser, res: Response, n
     try {
        const { query: { token } } = req;
        const user:users = await db.oneOrNone(AuthQureies.fetchUserByToken, token);
-       console.log(user);
        logger('info', `${enums.CURRENT_TIME_STAMP}, 'successfully fetched user with the user token checkIfTokenIsValid.middlewares.auth`)
         req.user = user;
        if(!user){
@@ -90,4 +90,20 @@ export const checkIfTokenIsValid = async (req: RequestWithUser, res: Response, n
      logger('error', `${enums.CURRENT_TIME_STAMP}, checking if email already exists failed ${enums.CHECK_IF_TOKEN_IS_VALID_MIDDLEWARE},
       ::::error=>  ${error.message} `)
     }
+}
+
+export const checkIfPasswordIsValid = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+ try {
+    const { body: { password }, user } = req;
+    const passwordMatch = await Hash.comparePassword(password, user.password);
+    if(!passwordMatch){
+       logger('info', `${enums.CURRENT_TIME_STAMP}, 'successfully confirms passwords do not match checkIfPasswordIsValid.middlewares.auth`)
+        return ApiResponse.error(res, enums.INVALID_PASSWORD, enums.HTTP_FORBIDDEN);
+    }
+    return next()
+ } catch (error) {
+    error.label = enums.CHECK_IF_PASSWORD_IS_VALID_MIDDLEWARE 
+     logger('error', `${enums.CURRENT_TIME_STAMP}, checking if password is valid failed ${enums.CHECK_IF_PASSWORD_IS_VALID_MIDDLEWARE},
+      ::::error=>  ${error.message} `)
+ }
 }
