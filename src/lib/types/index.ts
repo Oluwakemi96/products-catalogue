@@ -12,9 +12,21 @@ export type users = {
     email: string,
     is_admin: boolean,
     is_email_verified: boolean,
+    is_deleted: boolean,
     token: string,
     token_expiry: string,
     password: string
+}
+
+export type product = {
+    category?: string,
+    sizes?: string,
+    product_image?: string,
+    status?: string,
+    quantity?: string,
+    description?: string,
+    page?: number,
+    per_page?: number
 }
 
 export interface RequestWithUser extends RequestWithToken{

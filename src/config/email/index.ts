@@ -21,3 +21,21 @@ export const forgotPassword = async ( user:userType.users, url: string ) => {
         logger('error', `${enums.CURRENT_TIME_STAMP}, sending email to reset password failed.forgotPassword.email error===>> ${error.message}`);
       })
 };
+export const signUp = async ( user:userType.users, url: string ) => {
+    const msg = {
+      to: `${user.email}`, 
+      from: 'rashidats@enyata.com', 
+      subject: 'VERIFY EMAIL',
+      html: `<strong>Welcome to PORTTITUDE, Home of life!!.. click <a href =${url}>${url}</a> to verify your email and 
+       fully set up your account for seamless experience. this link will expire in 10mins
+      </strong>`,
+    }
+   return sgMail
+      .send(msg)
+      .then(() => {
+        logger('info', `${enums.CURRENT_TIME_STAMP}, successfully sent a mail to verify user's email.signUp.email`);
+      })
+      .catch((error) => {
+        logger('error', `${enums.CURRENT_TIME_STAMP}, sending email to verify email failed.signUp.email error===>> ${error.message}`);
+      })
+};

@@ -3,13 +3,57 @@ import * as Hash from '../../lib/helpers/hash.auth';
 import dayjs from 'dayjs';
 import logger from '../../config/logger/index';
 import enums from '../../lib/enums';
-import AuthQureies from '../queries/query.users';
+import AuthQureies from '../queries/query.users.auth';
 import ApiResponse from '../../lib/http/lib.http.response';
 import { db } from '../../config/db';
 import { Request, Response, NextFunction } from 'express';
 import { RequestWithToken, users, RequestWithUser
  } from '../../lib/types';
-import { date } from 'joi';
+
+export const validateAuthToken = async (req: RequestWithUser, res: Response, next:NextFunction) => {
+    try {
+        let token = req.headers.authorization;
+        if (!token) {
+            logger('info', `${enums.CURRENT_TIME_STAMP}, 'successfully confirms token does not exist in the headers validateAuthToken.middlewares.auth`)
+            return ApiResponse.error(res, enums.NO_TOKEN, enums.HTTP_UNAUTHORIZED);
+        }
+        if (!token.startsWith('Bearer ')) {
+            return ApiResponse.error(res, enums.INVALID_TOKEN, enums.HTTP_UNAUTHORIZED);
+          }
+          if (token.startsWith('Bearer ')) {
+            token = token.slice(7, token.length);
+            logger('info', `${enums.CURRENT_TIME_STAMP}, 'successfully extracts token validateAuthToken.middlewares.auth`)
+            const decoded = Hash.decodeToken(token)
+            logger('info', `${enums.CURRENT_TIME_STAMP}, 'successfully decoded the token validateAuthToken.middlewares.auth`)
+        if (decoded.message){
+            if (decoded.message === 'jwt expired'){
+               return ApiResponse.error(res, enums.SESSION_EXPIRED, enums.HTTP_UNAUTHORIZED);  
+            }
+            logger('info', `${enums.CURRENT_TIME_STAMP}, 'successfully confirms that the decoded has a message validateAuthToken.middlewares.auth`)
+            return ApiResponse.error(res, decoded.message, enums.HTTP_UNAUTHORIZED);
+        }   
+        const user = await db.oneOrNone(AuthQureies.fetchUserById, decoded.user_id);
+        logger('info', `${enums.CURRENT_TIME_STAMP}, 'successfully fetched user by its id validateAuthToken.middlewares.auth`)
+        if(!user) {
+         logger('info', `${enums.CURRENT_TIME_STAMP}, 'successfully confirms user does not exist in the DB validateAuthToken.middlewares.auth`)
+         return ApiResponse.error(res, enums.INVALID_TOKEN, enums.HTTP_UNAUTHORIZED);
+        }
+        if (user && (user.is_deleted || user.status === 'suspended' || user.status === 'deactivated')) {
+            const userStatus = user.is_deleted ? 'deleted, kindly contact support team'  : `${user.status}, kindly contact support team`;
+            logger('info', `${enums.CURRENT_TIME_STAMP}, ${decoded.user_id}:::Info: successfully confirms that user account is ${userStatus} in the database 
+            validateAuthToken.middlewares.auth.js`);
+            return ApiResponse.error(res, enums.USER_ACCOUNT_STATUS(userStatus), enums.HTTP_UNAUTHORIZED);
+          }
+          req.user = user;
+          return next();
+
+
+          }
+    } catch (error) {
+        
+    }
+}
+
 
 export const generateVerificationToken = async (req: RequestWithToken, res: Response, next: NextFunction) => {
     try {

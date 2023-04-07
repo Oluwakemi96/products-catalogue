@@ -12,4 +12,11 @@ export const USER_DOES_NOT_EXIST = 'Email does not exist, kindly enter a valid e
 export const INVALID_TOKEN = 'Token is invalid';
 export const TOKEN_EXPIRED = 'Token has expired';
 export const INVALID_PASSWORD = 'Invalid login details';
+export const NO_TOKEN = 'Please provide token';
+export const SESSION_EXPIRED = 'Session expired';
+export const USER_ACCOUNT_STATUS = (status: string) => `User account is ${status} `;
+export const PRODUCT_ADDED_SUCCESSFULLY = 'Product added successfully';
+export const ACCESS_DENIED = 'Access denied! Contact support';
+export const PRODUCTS_FETCHED_SUCCESSFULLY = 'Products fetched successfully';
+export const PRODUCT_FETCHED_SUCCESSFULLY = 'Product fetched successfully';
 

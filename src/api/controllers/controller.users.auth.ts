@@ -1,4 +1,4 @@
-import AuthQueries from '../queries/query.users';
+import AuthQueries from '../queries/query.users.auth';
 import * as Hash from '../../lib/helpers/hash.auth';
 import  ApiResponse from '../../lib/http/lib.http.response';
 import Payload from '../../lib/payloads/lib.payload.users';
@@ -17,9 +17,14 @@ export const signUpUser = async (req: RequestWithToken, res: Response, next: any
         const { body, token, token_expiry } = req;
         const hashedPassword = Hash.hashUserPassword(body.password);
         const payload = Payload.signUpUser(body, token, token_expiry, hashedPassword);
+        const emailVerificationLink = `http://homeofappliancesandbeauty?token=${token}`
         logger('info', `${enums.CURRENT_TIME_STAMP}, successfully hashed user password signUpUser.controller.users.auth`);
         const user = await db.oneOrNone(AuthQueries.registerUser, payload);
         logger('info', `${enums.CURRENT_TIME_STAMP}, successfully registered a user in the DB signUpUser.controller.users.auth`);
+        delete user.token;
+        delete user.token_expiry;
+        delete user.password;
+        Mails.signUp(user, emailVerificationLink)
         return ApiResponse.success(res, enums.SIGNED_UP_USER_SUCCESSFULLY, enums.HTTP_CREATED, user);
     } catch (error) {
         error.label = enums.SIGN_UP_USER_CONTROLLER
@@ -30,7 +35,7 @@ export const signUpUser = async (req: RequestWithToken, res: Response, next: any
 export const verifyEmail = async (req: RequestWithUser, res: Response, next: any ) => {
     try {
        const { user } = req;
-       await db.none(AuthQueries.verifyUserEmail, user.user_id);
+          await db.none(AuthQueries.verifyUserEmail, user.user_id);
        logger('info', `${enums.CURRENT_TIME_STAMP}, successfully verified user email verifyEmail.controller.users.auth`);
        return ApiResponse.success(res, enums.EMAIL_VERIFIED_SUCCESSFULLY, enums.HTTP_OK, []);
 
@@ -75,7 +80,7 @@ export const resetPassword = async (req: RequestWithUser, res:Response, next:Nex
         const { user, body:{ password } } = req;
         const hashedPassword = Hash.hashUserPassword(password);
         await db.none(AuthQueries.resetPassword, ([ user.user_id, hashedPassword ]))
-        logger('info', `${enums.CURRENT_TIME_STAMP}, successfully successfully reset user's password resetPassword.controller.users.auth`);
+        logger('info', `${enums.CURRENT_TIME_STAMP}, successfully reset user's password resetPassword.controller.users.auth`);
         return ApiResponse.success(res, enums.PASSWORD_RESET_SUCCESSFULLY, enums.HTTP_OK, []);
     } catch (error) {
         error.label = enums.RESET_PASSWORD_CONTROLLER
@@ -91,7 +96,7 @@ export const login = async (req: RequestWithUser, res:Response, next:NextFunctio
         }, config.PRODUCT_CATALOGUE_JWT_SECRET_KEY, {
             expiresIn: '20min'
         });
-        logger('info', `${enums.CURRENT_TIME_STAMP}, successfully successfully generate a JWT token login.controller.users.auth`);
+        logger('info', `${enums.CURRENT_TIME_STAMP}, successfully generate a JWT token login.controller.users.auth`);
         delete user.password
         const data = {
             ...user,
@@ -103,3 +108,4 @@ export const login = async (req: RequestWithUser, res:Response, next:NextFunctio
         logger('error', `logging in failed ${enums.LOGIN_CONTROLLER}::::error=>  ${error.message}`)
     }
 }
+

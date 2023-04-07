@@ -13,3 +13,7 @@ export const CHECK_IF_EMAIL_ALREADY_EXISTS_MIDDLEWARE= 'AuthMiddleware::checkIfE
 export const CHECK_IF_EMAIL_EXISTS_MIDDLEWARE= 'AuthMiddleware::checkIfEmailExists'
 export const CHECK_IF_TOKEN_IS_VALID_MIDDLEWARE= 'AuthMiddleware::checkIfTokenIsValid'
 export const CHECK_IF_PASSWORD_IS_VALID_MIDDLEWARE= 'AuthMiddleware::checkIfPaaswordIsValid'
+export const ADD_PRODUCT_CONTROLLER= 'AuthMiddleware::addProduct'
+export const CHECK_IF_USER_IS_ADMIN_MIDDLEWARE= 'AuthMiddleware::checkIfUserIsAdmin'
+export const FETCH_ALL_PRODUCTS_CONTROLLER= 'AuthController::fetchAllProducts'
+export const FETCH_A_PRODUCT_CONTROLLER= 'AuthMiddleware::fetchAProducts'
