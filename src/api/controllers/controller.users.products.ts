@@ -14,7 +14,7 @@ export const fetchAllProducts = async (req:Request, res:Response, next:NextFunct
         const payload = Payload.fetchAllProducts(query);
         const [ products, [ productCount ] ] = await Promise.all([
             db.any(UserQueries.fetchAllProducts, payload),
-            db.any(UserQueries.productsCount)
+            db.any(UserQueries.productsCount, payload)
         ]);
         logger('info', `${enums.CURRENT_TIME_STAMP}, 'successfully fetched all products from the DB fetchAllProducts.controllers.auth`);
         const data = {
