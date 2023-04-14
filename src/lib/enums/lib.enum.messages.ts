@@ -19,4 +19,6 @@ export const PRODUCT_ADDED_SUCCESSFULLY = 'Product added successfully';
 export const ACCESS_DENIED = 'Access denied! Contact support';
 export const PRODUCTS_FETCHED_SUCCESSFULLY = 'Products fetched successfully';
 export const PRODUCT_FETCHED_SUCCESSFULLY = 'Product fetched successfully';
+export const PRODUCT_IS_SOLD_OUT = 'Product is currently sold out, kindly check for other products';
+export const PRODUCT_ORDERED_SUCCESSFULLY = 'Product ordered successfuly';
 

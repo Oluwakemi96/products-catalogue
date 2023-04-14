@@ -34,5 +34,40 @@ export default{
             description
         FROM products 
         WHERE product_id = $1
+    `,
+    orderAProduct:`
+        INSERT INTO orders(
+            user_id,
+            product_id,
+            size,
+            quantity
+            )
+        VALUES ( $1, $2, $3, $4)
+        RETURNING *
+    `,  
+
+    decreamentProducts:`
+    UPDATE products
+    SET 
+      updated_at = NOW(),
+      quantity = p.quantity::int - orders.quantity
+    FROM products p
+    JOIN orders
+    ON p.product_id = orders.product_id
+    WHERE products.product_id = $1
+    `,
+
+    checkProductStatus:`
+        SELECT quantity, status 
+        FROM products
+        WHERE product_id =$1
+    `,
+
+    updateProductStatus:`
+       UPDATE products
+       SET 
+        updated_at = NOW(),
+        status = 'sold out'
+       WHERE product_id = $1
     `
-}
+};

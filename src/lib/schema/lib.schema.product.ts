@@ -19,3 +19,9 @@ export const fetchAllProducts: object = Joi.object({
     page: Joi.number(),
     per_page:Joi.number()
 })
+
+export const orderProduct: object = Joi.object({
+    product_id: Joi.string().required(),
+    size: Joi.string().required(),
+    quantity: Joi.number().required()
+})

@@ -29,4 +29,12 @@ router.get(
     UserControllers.fetchAProduct
 );
 
+router.post(
+    '/order',
+    AuthMiddlewares.validateAuthToken,
+    Model(Schema.orderProduct, 'payload'),
+    ProductsMiddlewares.checkIfProductIsAvailable,
+    UserControllers.orderAProduct
+);
+
 export default router;
