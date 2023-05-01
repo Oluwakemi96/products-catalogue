@@ -8,7 +8,6 @@ import { db } from '../../config/db/index';
 import { Request, Response, NextFunction } from 'express';
 import { RequestWithUser } from '../../lib/types';
 
-
 export const fetchAllProducts = async (req:Request, res:Response, next:NextFunction) => {
     try {
         const { query } = req;
@@ -48,7 +47,7 @@ export const orderAProduct = async (req: RequestWithUser, res:Response, next:Nex
         const { body:{ product_id, size, quantity }, user} = req;
         const order = await db.oneOrNone(UserQueries.orderAProduct, [ user.user_id, product_id, size, quantity ])
         logger('info', `${enums.CURRENT_TIME_STAMP}, 'user successfully orders a product orderAProduct.controllers.auth`);
-        await db.none(UserQueries.decreamentProducts, product_id);
+        await db.none(UserQueries.decreamentProducts, [ product_id, user.user_id, order.order_id ]);
         logger('info', `${enums.CURRENT_TIME_STAMP}, 'successfully decreaments the product quantity in the DB orderAProduct.controllers.auth`);
         const product = await db.oneOrNone(UserQueries.checkProductStatus, product_id);
         if (product.quantity <= 0) {
@@ -59,5 +58,55 @@ export const orderAProduct = async (req: RequestWithUser, res:Response, next:Nex
     } catch (error) {
         error.label = enums.ORDER_A_PRODUCT_CONTROLLER
         logger('error', `${enums.CURRENT_TIME_STAMP}, ordering a product failed ${enums.ORDER_A_PRODUCT_CONTROLLER}, ::::error=>  ${error.message} `);
+    }
+};
+
+export const fetchUserOrder = async (req:RequestWithUser, res:Response, next:NextFunction) => {
+    try {
+        const {  user } = req;
+        const order = await db.any(UserQueries.fetchAuserOrder, user.user_id);
+        logger('info', `${enums.CURRENT_TIME_STAMP}, 'user successfully fetches his orders fetchUserOrder.controllers.auth`);
+        return ApiResponse.success(res, enums.ORDERS_FETCHED_SUCCESSFULLY, enums.HTTP_OK, order);
+    } catch (error) {
+        error.label = enums.FETCH_USER_ORDERS_CONTROLLER
+        logger('error', `${enums.CURRENT_TIME_STAMP}, fetching user orders failed ${enums.FETCH_USER_ORDERS_CONTROLLER}, ::::error=>  ${error.message} `);
+
+    }
+};
+
+export const trackOrder = async (req:RequestWithUser, res:Response, next:NextFunction) => {
+    try {
+        const { params:{ order_id }, user } = req;
+        const order = await db.oneOrNone(UserQueries.trackOrder, [ user.user_id, order_id ]);
+        logger('info', `${enums.CURRENT_TIME_STAMP}, 'user successfully fetches the status of his order trackOrder.controllers.auth`);
+        return ApiResponse.success(res, enums.ORDER_STATUS_FETCHED_SUCCESSFULLY(order?.status), enums.HTTP_OK, order);
+    } catch (error) {
+        error.label = enums.TRACK_ORDER_CONTROLLER 
+        logger('error', `${enums.CURRENT_TIME_STAMP}, tracking order status failed ${enums.TRACK_ORDER_CONTROLLER }, ::::error=>  ${error.message} `);
+  
+    }
+};
+export const cancelOrder = async (req:RequestWithUser, res:Response, next:NextFunction) => {
+    try {
+        const { params:{ order_id }, user } = req;
+        await db.oneOrNone(UserQueries.cancelOrder, [ user.user_id, order_id ]);
+        logger('info', `${enums.CURRENT_TIME_STAMP}, 'user successfully cancels his order cancelOrder.controllers.auth`);
+        return ApiResponse.success(res, enums.ORDER_CANCELLED_SUCCESSFULLY(order_id), enums.HTTP_OK, []);
+    } catch (error) {
+        error.label = enums.CANCEL_ORDER_CONTROLLER 
+        logger('error', `${enums.CURRENT_TIME_STAMP}, cancelling order failed ${enums.CANCEL_ORDER_CONTROLLER }, ::::error=>  ${error.message} `);
+  
+    }
+};
+export const deleteOrder = async (req:RequestWithUser, res:Response, next:NextFunction) => {
+    try {
+        const { params:{ order_id }, user } = req;
+        await db.oneOrNone(UserQueries.deleteOrder, [ user.user_id, order_id ]);
+        logger('info', `${enums.CURRENT_TIME_STAMP}, 'user successfully deletes his order deleteOrder.controllers.auth`);
+        return ApiResponse.success(res, enums.ORDER_DELETED_SUCCESSFULLY(order_id), enums.HTTP_OK, []);
+    } catch (error) {
+        error.label = enums.DELETE_ORDER_CONTROLLER 
+        logger('error', `${enums.CURRENT_TIME_STAMP}, deleting order failed ${enums.DELETE_ORDER_CONTROLLER }, ::::error=>  ${error.message} `);
+  
     }
 };

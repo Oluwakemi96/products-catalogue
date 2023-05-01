@@ -13,7 +13,6 @@ import { RequestWithToken, users, RequestWithUser
     try {
         const { user: { user_id } } = req;
         const user = await db.oneOrNone(AuthQureies.fetchUserById, user_id);
-        console.log(user);
         logger('info', `${enums.CURRENT_TIME_STAMP}, successfully fetched user from the DB checkIfUserIsAdmin.middleware.users.auth`);
         if(!user.is_admin){
             logger('info', `${enums.CURRENT_TIME_STAMP}, successfully confirms user is not an admin checkIfUserIsAdmin.middleware.users.auth`);
@@ -35,11 +34,30 @@ import { RequestWithToken, users, RequestWithUser
             logger('info', `${enums.CURRENT_TIME_STAMP}, successfully confirms the product is sold out checkIfProductIsAvailable.middleware.users.auth`);
             return ApiResponse.error(res, enums.PRODUCT_IS_SOLD_OUT, enums.HTTP_FORBIDDEN)
         };
+        if(product.quantity < quantity) {
+            logger('info', `${enums.CURRENT_TIME_STAMP}, successfully confirms the quantity requested is less than the quantity available for sale.middleware.users.auth`);
+            return ApiResponse.error(res, enums.FEW_QUANTITY_LEFT(product.quantity), enums.HTTP_FORBIDDEN)
+        }
         return next()
     } catch (error) {
-        error.label = enums.CHECK_IF_PRODUCT_IS_AVAILABLE_MIDDLEWARE
-        logger('error', `${enums.CURRENT_TIME_STAMP}, checking if product is available failed ${enums.CHECK_IF_PRODUCT_IS_AVAILABLE_MIDDLEWARE}, ::::error=>  ${error.message} `)    
+            error.label = enums.CHECK_IF_PRODUCT_IS_AVAILABLE_MIDDLEWARE
+            logger('error', `${enums.CURRENT_TIME_STAMP}, checking if product is available failed ${enums.CHECK_IF_PRODUCT_IS_AVAILABLE_MIDDLEWARE}, ::::error=>  ${error.message} `)    
     }
  };
+
+ export const checkIfProductExists = async (req: Request, res: Response, next:NextFunction) => {
+    try {
+        const { product_id } = req.query
+        const product = await db.oneOrNone(UserQueries.checkProductStatus, product_id);
+        if(!product) {
+             logger('info', `${enums.CURRENT_TIME_STAMP}, successfully confirms product does not exist checkIfProductExists.middleware.users.auth`);
+            return ApiResponse.error(res, enums.PRODUCT_DOES_NOT_EXIST, enums.HTTP_OK);
+        }
+        return next();
+    } catch (error) {
+        error.label = enums.CHECK_IF_PRODUCT_EXISTS_MIDDLEWARE
+        logger('error', `${enums.CURRENT_TIME_STAMP}, checking if product is exists failed ${enums.CHECK_IF_PRODUCT_EXISTS_MIDDLEWARE}, ::::error=>  ${error.message} `)
+    }
+ }
 
 

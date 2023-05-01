@@ -37,4 +37,44 @@ router.post(
     UserControllers.orderAProduct
 );
 
+router.patch(
+    '/update-quantity',
+    AuthMiddlewares.validateAuthToken,
+    ProductsMiddlewares.checkIfUserIsAdmin,
+    Model(Schema.productId, 'query'),
+    Model(Schema.updateProductQuantity, 'payload'),
+    ProductsMiddlewares.checkIfProductExists,
+    AdminControllers.updateProduct
+);
+
+router.get(
+    '/:order_id/orders',
+    AuthMiddlewares.validateAuthToken,
+    UserControllers.fetchUserOrder
+);
+
+router.get(
+    '/:order_id/order-status',
+    AuthMiddlewares.validateAuthToken,
+    Model(Schema.orderId, 'params'),
+    UserControllers.trackOrder
+);
+
+router.patch(
+    '/:order_id/cancel-order',
+    AuthMiddlewares.validateAuthToken,
+    Model(Schema.orderId, 'params'),
+    UserControllers.cancelOrder
+);
+
+router.patch(
+    '/:order_id/delete-order',
+    AuthMiddlewares.validateAuthToken,
+    Model(Schema.orderId, 'params'),
+    UserControllers.deleteOrder
+);
+
+
+
+
 export default router;

@@ -14,9 +14,11 @@ export default {
     `,
 
     updateProductQuantity:`
-        UPDATE products
-        SET updated_at = NOW(),
-            quantity = $2
-        WHERE product_id = $1
+    UPDATE products
+    SET 
+     updated_at = NOW(),
+     quantity = quantity::int + $2
+    WHERE product_id = $1
+    RETURNING *
     `,
 }

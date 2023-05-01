@@ -25,3 +25,10 @@ export const orderProduct: object = Joi.object({
     size: Joi.string().required(),
     quantity: Joi.number().required()
 })
+
+export const updateProductQuantity: object = Joi.object({
+    quantity: Joi.number().required()
+});
+export const orderId: object = Joi.object({
+    order_id: Joi.string().required()
+});

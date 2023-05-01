@@ -19,3 +19,18 @@ export const addProducts = async (req:RequestWithUser, res:Response, next:NextFu
         logger('error', `adding a product failed ${enums.ADD_PRODUCT_CONTROLLER}::::error=>  ${error.message}`)
     }
 };
+
+export const updateProduct = async (req: RequestWithUser, res: Response, next:NextFunction) => {
+    try {
+       const { body:{ quantity }, query:{ product_id } } =req;
+       const product = await db.oneOrNone(AdminQueries.updateProductQuantity, [ product_id, quantity ])
+       logger('info', `${enums.CURRENT_TIME_STAMP}, successfully added to the product quantity updateProduct.controller.users.auth`);
+       if (product.quantity > 0){
+            
+       }
+       return ApiResponse.success(res, enums.PRODUCT_UPDATED_SUCCESSFULLY, enums.HTTP_OK, product);
+    } catch (error) {
+        error.label = enums.UPDATE_PRODUCT_CONTROLLER
+        logger('error', `updating a product failed ${enums.UPDATE_PRODUCT_CONTROLLER}::::error=>  ${error.message}`) 
+    }
+}

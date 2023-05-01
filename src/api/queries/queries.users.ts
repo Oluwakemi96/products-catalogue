@@ -47,14 +47,14 @@ export default{
     `,  
 
     decreamentProducts:`
-    UPDATE products
-    SET 
-      updated_at = NOW(),
-      quantity = p.quantity::int - orders.quantity
-    FROM products p
-    JOIN orders
-    ON p.product_id = orders.product_id
-    WHERE products.product_id = $1
+       UPDATE products
+       SET 
+        updated_at = NOW(),
+        quantity = p.quantity::int - orders.quantity
+       FROM products p
+       JOIN orders
+       ON p.product_id = orders.product_id
+       WHERE products.product_id = $1 AND user_id = $2 AND orders.is_cancelled = false AND orders.order_id = $3
     `,
 
     checkProductStatus:`
@@ -69,5 +69,36 @@ export default{
         updated_at = NOW(),
         status = 'sold out'
        WHERE product_id = $1
+    `,
+
+    fetchAuserOrder:`
+        SELECT 
+            id,
+            order_id,
+            product_id,
+            quantity,
+            status
+        FROM orders
+        WHERE user_id = $1 
+    
+    `,
+
+    trackOrder:`
+        SELECT order_id, product_id, status
+        FROM orders
+        WHERE order_id = $2 AND user_id = $1
+    `,
+
+    cancelOrder: `
+            UPDATE orders
+            SET updated_at = NOW(),
+                is_cancelled = true
+            WHERE user_id = $1 AND order_id = $2
+    `,
+    deleteOrder: `
+            UPDATE orders
+            SET updated_at = NOW(),
+                is_deleted = true
+            WHERE user_id = $1 AND order_id = $2
     `
 };

@@ -16,9 +16,16 @@ export const NO_TOKEN = 'Please provide token';
 export const SESSION_EXPIRED = 'Session expired';
 export const USER_ACCOUNT_STATUS = (status: string) => `User account is ${status} `;
 export const PRODUCT_ADDED_SUCCESSFULLY = 'Product added successfully';
+export const PRODUCT_UPDATED_SUCCESSFULLY = 'Product updated successfully';
 export const ACCESS_DENIED = 'Access denied! Contact support';
 export const PRODUCTS_FETCHED_SUCCESSFULLY = 'Products fetched successfully';
 export const PRODUCT_FETCHED_SUCCESSFULLY = 'Product fetched successfully';
 export const PRODUCT_IS_SOLD_OUT = 'Product is currently sold out, kindly check for other products';
 export const PRODUCT_ORDERED_SUCCESSFULLY = 'Product ordered successfuly';
+export const PRODUCT_DOES_NOT_EXIST = 'Product does not exist';
+export const ORDERS_FETCHED_SUCCESSFULLY = 'Orders fetched successfully';
+export const ORDER_STATUS_FETCHED_SUCCESSFULLY = (status: string) => `your order is currently ${status}`;
+export const ORDER_CANCELLED_SUCCESSFULLY = (order_id: string) =>  `your order ${order_id} has been cancelled successfully`;
+export const ORDER_DELETED_SUCCESSFULLY = (order_id: string) =>  `your order ${order_id} has been deleted successfully`;
+export const FEW_QUANTITY_LEFT = (quantity: number) =>  `there is only ${quantity} piece(s) left`;
 
