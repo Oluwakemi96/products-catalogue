@@ -4,6 +4,7 @@ import Payload from '../../lib/payloads/lib.payload.users';
 import * as Helpers from '../../lib/helpers/helpers';
 import logger from '../../config/logger';
 import enums from '../../lib/enums/index';
+import * as Mails from '../../config/email';
 import { db } from '../../config/db/index';
 import { Request, Response, NextFunction } from 'express';
 import { RequestWithUser } from '../../lib/types';
@@ -118,6 +119,7 @@ export const shipOrder = async (req:RequestWithUser, res:Response, next:NextFunc
         logger('info', `${enums.CURRENT_TIME_STAMP}, 'Order successfully shipped shipOrder.controllers.auth`);
         await db.none(UserQueries.updateOrderStatus, [ user.user_id, product_id, order_id ]);
         logger('info', `${enums.CURRENT_TIME_STAMP}, 'successfully updates the order status shipOrder.controllers.auth`);
+        Mails.orderShipped(user, order_id);
         return ApiResponse.success(res, enums.ORDER_SHIPPED_SUCCESSFULLY(order_id), enums.HTTP_OK, []);
     } catch (error) {
         error.label = enums.SHIP_ORDER_CONTROLLER
