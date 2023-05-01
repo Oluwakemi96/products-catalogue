@@ -32,3 +32,7 @@ export const updateProductQuantity: object = Joi.object({
 export const orderId: object = Joi.object({
     order_id: Joi.string().required()
 });
+export const delivery: object = Joi.object({
+    order_id: Joi.string().required(),
+    product_id: Joi.string().required()
+});

@@ -27,5 +27,7 @@ export const ORDERS_FETCHED_SUCCESSFULLY = 'Orders fetched successfully';
 export const ORDER_STATUS_FETCHED_SUCCESSFULLY = (status: string) => `your order is currently ${status}`;
 export const ORDER_CANCELLED_SUCCESSFULLY = (order_id: string) =>  `your order ${order_id} has been cancelled successfully`;
 export const ORDER_DELETED_SUCCESSFULLY = (order_id: string) =>  `your order ${order_id} has been deleted successfully`;
+export const ORDER_SHIPPED_SUCCESSFULLY = (order_id: any) =>  `order ${order_id} has been shipped successfully`;
 export const FEW_QUANTITY_LEFT = (quantity: number) =>  `there is only ${quantity} piece(s) left`;
+export const ORDER_HAS_BEEN_CANCELLED = (order_id: string) =>  `order ${order_id} has been cancelled`;
 

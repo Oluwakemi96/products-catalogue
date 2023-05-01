@@ -51,7 +51,7 @@ export const orderAProduct = async (req: RequestWithUser, res:Response, next:Nex
         logger('info', `${enums.CURRENT_TIME_STAMP}, 'successfully decreaments the product quantity in the DB orderAProduct.controllers.auth`);
         const product = await db.oneOrNone(UserQueries.checkProductStatus, product_id);
         if (product.quantity <= 0) {
-            logger('info', `${enums.CURRENT_TIME_STAMP}, successfully confirms that product quantity is less than or equal to zero checkProductStatus.middleware.users.auth`);
+            logger('info', `${enums.CURRENT_TIME_STAMP}, successfully confirms that product quantity is less than or equal to zero orderAProduct.controllers.users.auth`);
             await db.none(UserQueries.updateProductStatus, product_id);
         }
         return ApiResponse.success(res, enums.PRODUCT_ORDERED_SUCCESSFULLY, enums.HTTP_OK, order)
@@ -110,3 +110,17 @@ export const deleteOrder = async (req:RequestWithUser, res:Response, next:NextFu
   
     }
 };
+
+export const shipOrder = async (req:RequestWithUser, res:Response, next:NextFunction) => {
+    try {
+        const {query: { order_id, product_id }, user } = req;
+        await db.oneOrNone(UserQueries.shipOrders, [ user.user_id, order_id, product_id ]);
+        logger('info', `${enums.CURRENT_TIME_STAMP}, 'Order successfully shipped shipOrder.controllers.auth`);
+        await db.none(UserQueries.updateOrderStatus, [ user.user_id, product_id, order_id ]);
+        logger('info', `${enums.CURRENT_TIME_STAMP}, 'successfully updates the order status shipOrder.controllers.auth`);
+        return ApiResponse.success(res, enums.ORDER_SHIPPED_SUCCESSFULLY(order_id), enums.HTTP_OK, []);
+    } catch (error) {
+        error.label = enums.SHIP_ORDER_CONTROLLER
+        logger('error', `${enums.CURRENT_TIME_STAMP}, shipping order failed ${enums.SHIP_ORDER_CONTROLLER}, ::::error=>  ${error.message} `);
+    }
+}

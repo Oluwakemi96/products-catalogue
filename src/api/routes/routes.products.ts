@@ -74,6 +74,15 @@ router.patch(
     UserControllers.deleteOrder
 );
 
+router.post(
+    '/ship-order',
+    AuthMiddlewares.validateAuthToken,
+    ProductsMiddlewares.checkIfUserIsAdmin,
+    Model(Schema.delivery, 'query'),
+    ProductsMiddlewares.checkIfOrderHasNotBeenCancelled,
+    UserControllers.shipOrder
+)
+
 
 
 

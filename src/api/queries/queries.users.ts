@@ -54,7 +54,7 @@ export default{
        FROM products p
        JOIN orders
        ON p.product_id = orders.product_id
-       WHERE products.product_id = $1 AND user_id = $2 AND orders.is_cancelled = false AND orders.order_id = $3
+       WHERE products.product_id = $1 AND user_id = $2 AND orders.order_id = $3
     `,
 
     checkProductStatus:`
@@ -100,5 +100,32 @@ export default{
             SET updated_at = NOW(),
                 is_deleted = true
             WHERE user_id = $1 AND order_id = $2
+    `,
+    shipOrders: `
+        INSERT INTO deliveries(
+            user_id,
+            order_id,
+            product_id,
+            status)
+        VALUES ($1, $2, $3, 'ongoing')
+        `,
+    updateOrderStatus:`
+        UPDATE orders
+        SET updated_at = NOW(),
+            status = 'shipped'
+        WHERE user_id = $1 AND product_id = $2 AND order_id = $3
+    `,
+    fetchOrdersById: `
+            SELECT 
+                id, 
+                user_id,
+                order_id,
+                product_id,
+                size,
+                quantity,
+                status,
+                is_cancelled
+            FROM orders
+            WHERE user_id = $1 AND product_id = $2 AND order_id = $3 
     `
 };

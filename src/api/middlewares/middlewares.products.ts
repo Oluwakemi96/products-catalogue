@@ -60,4 +60,18 @@ import { RequestWithToken, users, RequestWithUser
     }
  }
 
-
+ export const checkIfOrderHasNotBeenCancelled = async (req: RequestWithUser, res: Response, next:NextFunction) => {
+    try {
+        const {query: { order_id, product_id }, user} = req;
+        const order  = await db.oneOrNone(UserQueries.fetchOrdersById, [ user.user_id, product_id, order_id ]);
+        logger('info', `${enums.CURRENT_TIME_STAMP}, successfully fetched orders from the DB checkIfOrderHasNotBeenCancelled.middleware.users.auth`);
+        if(order.is_cancelled) {
+            logger('info', `${enums.CURRENT_TIME_STAMP}, successfully confirms order has been cancelled checkIfOrderHasNotBeenCancelled.middleware.users.auth`);
+            return ApiResponse.error(res, enums.ORDER_HAS_BEEN_CANCELLED(order.order_id), enums.HTTP_BAD_REQUEST);
+        }
+        return next();
+    } catch (error) {
+        error.label = enums.CHECK_IF_ORDER_IS_CANCELLED_MIDDLEWARE
+        logger('error', `${enums.CURRENT_TIME_STAMP}, checking if order is cancelled failed ${enums.CHECK_IF_ORDER_IS_CANCELLED_MIDDLEWARE}, ::::error=>  ${error.message} `)
+    }
+ }
